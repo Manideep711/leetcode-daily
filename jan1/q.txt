@@ -1,0 +1,144 @@
+1422. Maximum Score After Splitting a String
+Solved
+Easy
+Topics
+Companies
+Hint
+Given a string s of zeros and ones, return the maximum score after splitting the string into two non-empty substrings (i.e. left substring and right substring).
+
+The score after splitting a string is the number of zeros in the left substring plus the number of ones in the right substring.
+
+ 
+
+Example 1:
+
+Input: s = "011101"
+Output: 5 
+Explanation: 
+All possible ways of splitting s into two non-empty substrings are:
+left = "0" and right = "11101", score = 1 + 4 = 5 
+left = "01" and right = "1101", score = 1 + 3 = 4 
+left = "011" and right = "101", score = 1 + 2 = 3 
+left = "0111" and right = "01", score = 1 + 1 = 2 
+left = "01110" and right = "1", score = 2 + 1 = 3
+Example 2:
+
+Input: s = "00111"
+Output: 5
+Explanation: When left = "00" and right = "111", we get the maximum score = 2 + 3 = 5
+Example 3:
+
+Input: s = "1111"
+Output: 3
+ 
+
+Constraints:
+
+2 <= s.length <= 500
+The string s consists of characters '0' and '1' only.
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+1. Brute Force Approach:
+At every point we count prev number of zeroes (towards left).
+Count number of ones to the right of that point.
+Store the ans and maximize it.
+Complexity
+Time complexity: O(n2)
+Space complexity: O(1)
+Code
+class Solution {
+    public int maxScore(String s) {
+        int ans = 0;
+        int n = s.length();
+        int zero = 0;
+
+        for (int i = 0; i < n - 1; i++) {
+            if (s.charAt(i) == '0') {
+                zero++;
+            }
+            int one = 0;
+            for (int j = i + 1; j < n; j++) {
+                if (s.charAt(j) == '1') {
+                    one++;
+                }
+            }
+            ans = Math.max(ans, one + zero);
+        }
+        return ans;
+    }
+}
+2. Better Approach
+Store the pref of counts of 1s in prefLeft.
+Store the suffix of counts of 0s in prefRight
+Store the ans and maximize it by:
+ans = max(ans, prefLeft[i]+prefRight[i+1]);.
+Complexity
+Time complexity: O(n)
+Space complexity: O(n)
+Code
+class Solution {
+    public int maxScore(String s) {
+        int n = s.length();
+        int[] prefLeft = new int[n];
+        int[] prefRight = new int[n];
+
+        prefLeft[0] = (s.charAt(0) == '0') ? 1 : 0;
+        prefRight[n - 1] = (s.charAt(n - 1) == '1') ? 1 : 0;
+
+        for (int i = 1; i < n; i++) {
+            prefLeft[i] = prefLeft[i - 1] + ((s.charAt(i) == '0') ? 1 : 0);
+        }
+
+        for (int i = n - 2; i >= 0; i--) {
+            prefRight[i] = prefRight[i + 1] + ((s.charAt(i) == '1') ? 1 : 0);
+        }
+
+        int ans = 0;
+        for (int i = 0; i < n - 1; i++) {
+            ans = Math.max(ans, prefLeft[i] + prefRight[i + 1]);
+        }
+        return ans;
+    }
+}
+
+3. Optimal Approach
+Intially store the number of zeroes from left side.
+Then iterate from the right size and keep countof ones.
+Update the ans as :
+ans = max(ans, one - (i == 0) + (zeroes-newZero));
+one - (i == 0) is done because we want one partition at i == 0 also.
+Complexity
+Time complexity: O(n)
+Space complexity: O(1)
+Code
+class Solution {
+    public int maxScore(String s) {
+        int n = s.length();
+        int zeroes = 0;
+
+        // Count total number of '0's in the string
+        for (int i = 0; i < n; i++) {
+            if (s.charAt(i) == '0') {
+                zeroes++;
+            }
+        }
+
+        int newZero = 0, one = 0, ans = 0;
+
+        for (int i = n - 1; i >= 0; i--) {
+            if (s.charAt(i) == '1') {
+                one++;
+            } else {
+                newZero++;
+            }
+
+            if (i != 0) { // Avoid splitting at the start
+                ans = Math.max(ans, one + (zeroes - newZero));
+            }
+        }
+        return ans;
+    }
+}
