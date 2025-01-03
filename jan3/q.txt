@@ -1,0 +1,2 @@
+https://leetcode.com/problems/number-of-ways-to-split-array/description/
+https://leetcode.com/problems/number-of-ways-to-split-array/editorial/#approach-1-prefix-sum-array
