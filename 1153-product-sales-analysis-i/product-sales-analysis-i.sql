@@ -1,0 +1,1 @@
+select pt.product_name,sl.year,sl.price from Product pt join Sales sl on pt.product_id=sl.product_id 
